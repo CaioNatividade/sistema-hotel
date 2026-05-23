@@ -57,7 +57,7 @@ php -S localhost:8080 -t public
 |--------|------------|--------------------------------------------|
 | GET    | `/quartos` | Listar quartos (com `?checkin=&checkout=`) |
 
-### Reservas (🔒 requer JWT)
+### Reservas (requer JWT)
 
 | Método | Rota              | Descrição            |
 |--------|-------------------|----------------------|
