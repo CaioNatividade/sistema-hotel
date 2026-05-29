@@ -12,42 +12,46 @@ Backend PHP + PostgreSQL com boas práticas de segurança, transações e arquit
 
 ---
 
-## Início Rápido
+## Como Executar o Projeto (Docker)
 
-### 1. Clonar e configurar ambiente
+O projeto foi totalmente automatizado utilizando Docker e Docker Compose. Não é necessário instalar o PHP, Composer ou PostgreSQL localmente na sua máquina.
+
+### Pré-requisitos
+
+- Ter o **Docker** e o **Docker Compose** instalados.
+
+### Passo a Passo
+
+1. **Clonar o repositório:**
+
+   ```bash
+   git clone [https://github.com/seu-usuario/sistema-hotel.git](https://github.com/seu-usuario/sistema-hotel.git)
+   cd sistema-hotel
+   ```
+
+2. **Iniciar a aplicação:**
+   Execute o comando abaixo na raiz do projeto. Ele irá baixar as imagens, configurar o banco de dados automaticamente (executando o schema inicial) e instalar todas as dependências do Composer em segundo plano:
 
 ```bash
-git clone <repositorio>
-cd hotel-reservas
-cp .env.example .env
-# Edite .env com suas credenciais se desejar (o padrão já vem pronto para Docker)
-```
-
-### 2. Subir com Docker
-
-```bash
-# Sobe os containers do Banco de Dados, PHP e Nginx
 docker compose up -d --build
-
-# Instala as dependências do PHP (Obrigatório na primeira execução)
-docker compose exec app composer install
-
-# Cria a estrutura de tabelas e sementes no Banco de Dados
-cat sql/01_schema.sql | docker compose exec -T db psql -U postgres -d hotel_reservas
 ```
 
-A aplicação estará disponível em `http://localhost:8080`.
-
-### 3. Sem Docker (desenvolvimento local)
-
-```bash
-composer install
-# Configure .env com credenciais do PostgreSQL local
-psql -U seu_usuario -d hotel_reservas -f sql/01_schema.sql
-php -S localhost:8080 -t public
-```
+3. Pronto!
+   A aplicação estará rodando e pronta para receber requisições em: `http://localhost:8081 `
 
 ---
+
+## Testando a API
+
+Para validar o funcionamento do sistema e a criação automatizada do banco de dados, você pode disparar uma requisição de teste para criar um usuário.
+
+**No Linux / Mac / WSL:**
+
+```bash
+curl -X POST http://localhost:8081/auth/registrar \
+     -H "Content-Type: application/json" \
+     -d '{"nome":"Joao Silva","email":"joao@email.com","senha":"senha123"}'
+```
 
 ## Endpoints da API
 
@@ -80,7 +84,7 @@ php -S localhost:8080 -t public
 ### Registrar usuário
 
 ```bash
-curl -X POST http://localhost:8080/auth/registrar \
+curl -X POST http://localhost:8081/auth/registrar \
   -H "Content-Type: application/json" \
   -d "{\"nome\":\"Joao Silva\",\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
 ```
@@ -88,7 +92,7 @@ curl -X POST http://localhost:8080/auth/registrar \
 ### Login
 
 ```bash
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8081/auth/login \
   -H "Content-Type: application/json" \
   -d "{\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
 ```
@@ -96,7 +100,7 @@ curl -X POST http://localhost:8080/auth/login \
 ### Criar reserva
 
 ```bash
-curl -X POST http://localhost:8080/reservas \
+curl -X POST http://localhost:8081/reservas \
   -H "Authorization: Bearer SEU_TOKEN" \
   -H "Content-Type: application/json" \
   -d "{
