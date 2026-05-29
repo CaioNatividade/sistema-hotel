@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # ---------------------------------------------------------------
   # Banco de dados PostgreSQL
@@ -9,16 +7,16 @@ services:
     container_name: hotel_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ${DB_NAME}
-      POSTGRES_USER:     ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: hotel_reservas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha123
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./sql:/docker-entrypoint-initdb.d:ro   # Executa scripts na inicialização
+      - ./sql:/docker-entrypoint-initdb.d:ro
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hotel_reservas"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,9 +28,16 @@ services:
     build: .
     container_name: hotel_app
     restart: unless-stopped
-    env_file: .env
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=hotel_reservas
+      - DB_USER=postgres
+      - DB_PASS=senha123
+      - JWT_SECRET=super_secret_key_123
     volumes:
-      - ./logs:/var/log/hotel
+      - .:/var/www/html
     depends_on:
       db:
         condition: service_healthy
@@ -45,9 +50,9 @@ services:
     container_name: hotel_nginx
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8080}:80"
+      - "8081:80"
     volumes:
-      - ./public:/var/www/html/public:ro
+      - .:/var/www/html:ro
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - app
