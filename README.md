@@ -25,8 +25,9 @@ O projeto foi totalmente automatizado utilizando Docker e Docker Compose. Não �
 1. **Clonar o repositório:**
 
    ```bash
-   git clone [https://github.com/seu-usuario/sistema-hotel.git](https://github.com/seu-usuario/sistema-hotel.git)
-   cd sistema-hotel
+    git clone https://github.com/seu-usuario/sistema-hotel.git
+
+    cd sistema-hotel
    ```
 
 2. **Iniciar a aplicação:**
@@ -51,6 +52,12 @@ Para validar o funcionamento do sistema e a criação automatizada do banco de d
 curl -X POST http://localhost:8081/auth/registrar \
      -H "Content-Type: application/json" \
      -d '{"nome":"Joao Silva","email":"joao@email.com","senha":"senha123"}'
+```
+
+**No Windows (PowerShell):**
+
+```bash
+curl.exe -X POST http://localhost:8081/auth/registrar -H "Content-Type: application/json" -d "{\"nome\":\"Joao Silva\",\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
 ```
 
 ## Endpoints da API
