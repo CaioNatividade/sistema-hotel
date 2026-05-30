@@ -19,7 +19,7 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testdox"
+        "test": "vendor/bin/phpunit tests --testdox"
     },
     "config": {
         "optimize-autoloader": true,
