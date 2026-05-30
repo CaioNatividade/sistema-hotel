@@ -95,7 +95,36 @@ curl -X POST http://localhost:8081/auth/login -H "Content-Type: application/json
 ```bash
 curl -X POST http://localhost:8081/reservas -H "Authorization: Bearer SEU_TOKEN_AQUI" -H "Content-Type: application/json" -d '{"quarto_id": 1, "data_checkin": "2026-08-10", "data_checkout": "2026-08-15", "num_hospedes": 2, "metodo_pagamento": "pix"}'
 ```
+### 3. Listar Quartos Disponíveis (Público)
 
+```bash
+curl -X GET "http://localhost:8081/quartos?checkin=2026-08-10&checkout=2026-08-15"
+```
+
+### 4. Listar Minhas Reservas (Requer Token JWT)
+
+```bash
+curl -X GET http://localhost:8081/reservas \
+     -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+### 5. Detalhes de uma Reserva Específica (Requer Token JWT)
+
+Substitua o `1` no final da URL pelo ID da reserva que deseja consultar:
+
+```bash
+curl -X GET http://localhost:8081/reservas/1 \
+	 -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+### 6. Cancelar Reserva (Requer Token JWT)
+
+Substitua o `1` no final da URL pelo ID da reserva que deseja deletar:
+
+```bash
+curl -X DELETE http://localhost:8081/reservas/1 \
+     -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
 ---
 
 ## Executando os Testes Automatizados
