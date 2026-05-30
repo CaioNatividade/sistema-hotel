@@ -46,7 +46,7 @@ docker compose up -d --build
 
 Para validar o funcionamento do sistema e a criação automatizada do banco de dados, você pode disparar uma requisição de teste para criar um usuário.
 
-**No Linux / Mac / WSL:**
+**No Linux / Mac / WSL:** (No seu windows basicamente seria o git bash ou wsl)
 
 ```bash
 curl -X POST http://localhost:8081/auth/registrar \
@@ -54,10 +54,10 @@ curl -X POST http://localhost:8081/auth/registrar \
      -d '{"nome":"Joao Silva","email":"joao@email.com","senha":"senha123"}'
 ```
 
-**No Windows (PowerShell):**
+**No Windows (PowerShell):** (Não recomendo, funciona pra testar aqui, mas no dia a dia ninguém usa. muito ruim)
 
-```bash
-curl.exe -X POST http://localhost:8081/auth/registrar -H "Content-Type: application/json" -d "{\"nome\":\"Joao Silva\",\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8081/auth/registrar" -Method Post -ContentType "application/json" -Body '{"nome":"Joao Carlos","email":"joaocarlos@email.com","senha":"senha123"}'
 ```
 
 ## Endpoints da API
