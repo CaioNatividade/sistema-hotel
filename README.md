@@ -102,7 +102,7 @@ curl -X POST http://localhost:8081/reservas -H "Authorization: Bearer SEU_TOKEN_
 
 Para rodar a suíte de testes do PHPUnit dentro do ambiente containerizado, execute:
 ```bash
-composer test
+docker compose exec app composer test
 ```
 ---
 
