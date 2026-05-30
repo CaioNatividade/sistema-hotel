@@ -1,3 +1,4 @@
+
 # Sistema de Reservas de Hotel
 
 Backend PHP + PostgreSQL com boas práticas de segurança, transações e arquitetura em camadas.
@@ -22,50 +23,38 @@ O projeto foi totalmente automatizado utilizando Docker e Docker Compose. Não �
 
 ### Passo a Passo
 
-1. **Clonar o repositório:**
+1. Clonar o repositório:
+   git clone https://github.com/CaioNatividade/sistema-hotel.git
+   cd sistema-hotel
 
-   ```bash
-    git clone https://github.com/seu-usuario/sistema-hotel.git
-
-    cd sistema-hotel
-   ```
-
-2. **Iniciar a aplicação:**
+2. Iniciar a aplicação:
    Execute o comando abaixo na raiz do projeto. Ele irá baixar as imagens, configurar o banco de dados automaticamente (executando o schema inicial) e instalar todas as dependências do Composer em segundo plano:
-
-```bash
-docker compose up -d --build
-```
+   
+   docker compose up -d --build
 
 3. Pronto!
-   A aplicação estará rodando e pronta para receber requisições em: `http://localhost:8081 `
+   A aplicação estará rodando e pronta para receber requisições em: http://localhost:8081
 
 ---
 
 ## Testando a API
 
-Para validar o funcionamento do sistema e a criação automatizada do banco de dados, você pode disparar uma requisição de teste para criar um usuário.
+Para validar o funcionamento do sistema e a criação automatizada do banco de dados, escolha o comando adequado para o seu terminal para disparar uma requisição de teste (criação de conta):
 
-**No Linux / Mac / WSL:** (No seu windows basicamente seria o git bash ou wsl)
+#### Linux / macOS / WSL / Git Bash
+curl -X POST http://localhost:8081/auth/registrar -H "Content-Type: application/json" -d '{"nome":"Joao Silva","email":"joao@email.com","senha":"senha123"}'
 
-```bash
-curl -X POST http://localhost:8081/auth/registrar \
-     -H "Content-Type: application/json" \
-     -d '{"nome":"Joao Silva","email":"joao@email.com","senha":"senha123"}'
-```
-
-**No Windows (PowerShell):** (Não recomendo, funciona pra testar aqui, mas no dia a dia ninguém usa. muito ruim)
-
-```powershell
+#### Windows (PowerShell Nativo)
 Invoke-RestMethod -Uri "http://localhost:8081/auth/registrar" -Method Post -ContentType "application/json" -Body '{"nome":"Joao Carlos","email":"joaocarlos@email.com","senha":"senha123"}'
-```
+
+---
 
 ## Endpoints da API
 
 ### Autenticação
 
-| Método | Rota              | Descrição                |
-| ------ | ----------------- | ------------------------ |
+| Método | Rota             | Descrição                |
+| ------ | ---------------- | ------------------------ |
 | POST   | `/auth/registrar` | Criar conta              |
 | POST   | `/auth/login`     | Autenticar (retorna JWT) |
 
@@ -81,83 +70,58 @@ Invoke-RestMethod -Uri "http://localhost:8081/auth/registrar" -Method Post -Cont
 | ------ | ---------------- | ---------------------- |
 | GET    | `/reservas`      | Listar minhas reservas |
 | POST   | `/reservas`      | Criar reserva          |
-| GET    | `/reservas/{id}` | Detalhe da reserva     |
+| GET    | `/reservas/{id}` | Detalhes da reserva    |
 | DELETE | `/reservas/{id}` | Cancelar reserva       |
 
 ---
 
-## Exemplos de uso
+## Exemplos de Uso (Ambientes Unix / Git Bash)
 
-### Registrar usuário
+Nota para usuários de Windows: Caso utilize o PowerShell, adapte os corpos (-Body) e cabeçalhos utilizando a sintaxe do Invoke-RestMethod demonstrada na seção de testes.
 
-```bash
-curl -X POST http://localhost:8081/auth/registrar \
-  -H "Content-Type: application/json" \
-  -d "{\"nome\":\"Joao Silva\",\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
-```
+### 1. Login
+curl -X POST http://localhost:8081/auth/login -H "Content-Type: application/json" -d '{"email":"joao@email.com","senha":"senha123"}'
 
-### Login
-
-```bash
-curl -X POST http://localhost:8081/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"joao@email.com\",\"senha\":\"senha123\"}"
-```
-
-### Criar reserva
-
-```bash
-curl -X POST http://localhost:8081/reservas \
-  -H "Authorization: Bearer SEU_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{
-    \"quarto_id\": 1,
-    \"data_checkin\": \"2025-08-10\",
-    \"data_checkout\": \"2025-08-15\",
-    \"num_hospedes\": 2,
-    \"metodo_pagamento\": \"pix\"
-  }"
-```
+### 2. Criar Reserva (Requer Token JWT)
+curl -X POST http://localhost:8081/reservas -H "Authorization: Bearer SEU_TOKEN_AQUI" -H "Content-Type: application/json" -d '{"quarto_id": 1, "data_checkin": "2026-08-10", "data_checkout": "2026-08-15", "num_hospedes": 2, "metodo_pagamento": "pix"}'
 
 ---
 
-## Testes
+## Executando os Testes Automatizados
 
-```bash
+Para rodar a suíte de testes do PHPUnit dentro do ambiente containerizado, execute:
+
 composer test
-```
 
 ---
 
 ## Estrutura do Projeto
 
-```
 hotel-reservas/
-├── docker/           # Configuração Nginx
-├── logs/             # Logs JSON (gerados em runtime)
-├── public/           # Front controller (index.php)
-├── sql/              # Scripts DDL e seed
+├── docker/           # Configurações do ambiente (Nginx / PHP)
+├── logs/             # Logs estruturados em JSON (gerados em runtime)
+├── public/           # Front Controller (index.php - ponto de entrada)
+├── sql/              # Scripts DDL de estrutura e seeds iniciais
 ├── src/
-│   ├── config/       # Database (PDO singleton) + Logger
-│   ├── controllers/  # Camada HTTP
-│   ├── middleware/   # JWT
-│   └── models/       # Lógica de negócio + SQL
-├── tests/            # PHPUnit
+│   ├── config/       # Conexão com Banco (PDO Singleton) e Logger
+│   ├── controllers/  # Camada HTTP e manipulação de Requests/Responses
+│   ├── middleware/   # Interceptadores (Validação de Token JWT)
+│   └── models/       # Entidades, Lógica de Negócio e persistência SQL
+├── tests/            # Testes automatizados com PHPUnit
 ├── Dockerfile
 ├── composer.json
 └── docker-compose.yml
-```
 
 ---
 
-## Decisões Técnicas
+## Decisões Técnicas e Segurança
 
-| Requisito                   | Solução                                              |
-| --------------------------- | ---------------------------------------------------- |
-| SQL Injection               | PDO + Prepared Statements em todo SQL                |
-| Senhas                      | `password_hash()` bcrypt cost=12                     |
-| Credenciais                 | 100% via `getenv()`, sem hardcode                    |
-| Transações                  | `beginTransaction/commit/rollBack` em ReservaModel   |
-| Disponibilidade concorrente | `SELECT ... FOR UPDATE SKIP LOCKED`                  |
-| Erros ao usuário            | Mensagens genéricas; detalhes vão apenas ao log      |
-| Logs                        | JSON estruturado com sanitização de campos sensíveis |
+| Requisito | Solução Aplicada |
+| :--- | :--- |
+| **SQL Injection** | Utilização rigorosa de PDO + Prepared Statements em todas as consultas. |
+| **Criptografia de Senhas** | Uso da função nativa password_hash() com algoritmo bcrypt e custo operacional (cost=12). |
+| **Variáveis de Ambiente** | Credenciais sensíveis gerenciadas 100% via getenv(), sem valores estáticos no código. |
+| **Transações** | Controle estrito com beginTransaction, commit e rollBack na camada de modelo de reservas. |
+| **Concorrência e Race Conditions** | Implementação de bloqueio pessimista utilizando SELECT ... FOR UPDATE SKIP LOCKED para evitar dupla reserva do mesmo quarto. |
+| **Exposição de Erros** | Mensagens genéricas e seguras para o cliente final; detalhes técnicos e exceções são direcionados exclusivamente aos logs. |
+| **Auditoria e Logs** | Geração de logs estruturados em formato JSON com sanitização automática de dados sensíveis (como senhas). |
